@@ -21,6 +21,16 @@ class YAxis extends React.Component {
         }
     }
     
+    getYScale(height, yDomain, data) {
+        let yScale = d3.scaleLinear().clamp(true).range([height, 0]);
+        yScale.domain([0, d3.max(data, yDomain)]);
+        return yScale;
+    }
+
+    getYAxis(yScale) {
+        return d3.axisLeft(yScale).tickFormat(d3.format('.2s'));
+    }
+
     renderD3() {
         const {
             height,
@@ -31,12 +41,9 @@ class YAxis extends React.Component {
         } = this.props;
 
         let g = connectFauxDOM('g', 'chart');
-        
-        var yScale = d3.scaleLinear().clamp(true).range([height, 0]);
-        yScale.domain([0, d3.max(data, yDomain)]);
-        
-        var axisDom = d3.select(g);
-        var yAxis = d3.axisLeft(yScale).tickFormat(d3.format('.2s'));
+        let yScale = this.getYScale(height, yDomain, data);
+        let axisDom = d3.select(g);
+        let yAxis = this.getYAxis(yScale);
         
         axisDom
             .attr("class", "axis axis--y")
@@ -47,7 +54,6 @@ class YAxis extends React.Component {
                 .attr("dy", "0.71em")
                 .attr("text-anchor", "end")
                 .text(title);
-        
     }
     
     updateD3() {
@@ -61,12 +67,9 @@ class YAxis extends React.Component {
         } = this.props;
         
         let g = connectFauxDOM('g', 'chart');
-        
-        var yScale = d3.scaleLinear().clamp(true).range([height, 0]);
-        yScale.domain([0, d3.max(data, yDomain)]);
-        
-        var axisDom = d3.select(g);
-        var yAxis = d3.axisLeft(yScale).tickFormat(d3.format('.2s'));
+        let yScale = this.getYScale(height, yDomain, data);
+        let axisDom = d3.select(g);
+        let yAxis = this.getYAxis(yScale);
         
         axisDom
             .transition()
@@ -74,7 +77,6 @@ class YAxis extends React.Component {
             .call(yAxis)
         
         animateFauxDOM(duration);
-        
     }
     
     render() {

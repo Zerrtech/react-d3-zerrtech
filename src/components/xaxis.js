@@ -5,7 +5,6 @@ import * as d3 from 'd3'
 import { withFauxDOM } from 'react-faux-dom'
 import CommonProps from './commonProps';
 
-
 class XAxis extends Component {
     
     static defaultProps = {
@@ -22,7 +21,17 @@ class XAxis extends Component {
         if (this.props.data !== prevProps.data) {
             this.updateD3()
         }
-    }  
+    }
+
+    getXScale(width, domain, data) {
+        let xScale = d3.scaleBand().rangeRound([0, width]).padding(0.3);
+        xScale.domain(data.map(domain));
+        return xScale;
+    }
+
+    getXAxis(xScale) {
+        return d3.axisBottom(xScale);
+    }
     
     renderD3() {
         const {
@@ -34,18 +43,15 @@ class XAxis extends Component {
         } = this.props;
         
         let g = connectFauxDOM('g', 'chart');
-        
-        var xScale = d3.scaleBand().rangeRound([0, width]).padding(0.3);    
-        xScale.domain(data.map(xDomain));
-        
-        var axisDom = d3.select(g);
-        var xAxis = d3.axisBottom(xScale);    
+        let xScale = this.getXScale(width, xDomain, data);
+        let axisDom = d3.select(g);
+        let xAxis = this.getXAxis(xScale);
         
         axisDom
             .attr("class", "axis axis--x")
             .attr("transform", "translate(0," + height + ")")
             .call(xAxis);
-        
+
     }
     
     updateD3() {
@@ -59,12 +65,9 @@ class XAxis extends Component {
         } = this.props;
         
         let g = connectFauxDOM('g', 'chart');
-        
-        var xScale = d3.scaleBand().rangeRound([0, width]).padding(0.3);    
-        xScale.domain(data.map(xDomain));
-        
-        var axisDom = d3.select(g);
-        var xAxis = d3.axisBottom(xScale);
+        let xScale = this.getXScale(width, xDomain, data);
+        let axisDom = d3.select(g);
+        let xAxis = this.getXAxis(xScale);
         
         axisDom
             .transition()

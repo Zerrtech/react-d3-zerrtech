@@ -27,6 +27,18 @@ class Bars extends React.Component {
     onClick(d) {
         this.props.onClick(d);
     }
+
+    getXScale(width, domain, data) {
+        let xScale = d3.scaleBand().rangeRound([0, width]).padding(0.3);
+        xScale.domain(data.map(domain));
+        return xScale;
+    }
+    
+    getYScale(height, yDomain, data) {
+        let yScale = d3.scaleLinear().clamp(true).range([height, 0]);
+        yScale.domain([0, d3.max(data, yDomain)]);
+        return yScale;
+    }
     
     renderD3() {
         const {
@@ -43,13 +55,9 @@ class Bars extends React.Component {
         } = this.props;
         
         let g = connectFauxDOM('g', 'chart');
-        
-        var xScale = d3.scaleBand().rangeRound([0, width]).padding(0.3);
-        var yScale = d3.scaleLinear().clamp(true).range([height, 0]);
-        
-        xScale.domain(data.map(xDomain));
-        yScale.domain([0, d3.max(data, yDomain)]);   
-        
+        let xScale = this.getXScale(width, xDomain, data);
+        let yScale = this.getYScale(height, yDomain, data);
+
         let update = d3.select(g)
             .selectAll('g.bar-group')
             .data(data, xDomain);
@@ -99,13 +107,8 @@ class Bars extends React.Component {
         } = this.props;
         
         let g = connectFauxDOM('g', 'chart');
-        
-        var xScale = d3.scaleBand().rangeRound([0, width]).padding(0.3);
-        var yScale = d3.scaleLinear().clamp(true).range([height, 0]);
-        
-        
-        xScale.domain(data.map(xDomain));
-        yScale.domain([0, d3.max(data, yDomain)]);
+        let xScale = this.getXScale(width, xDomain, data);
+        let yScale = this.getYScale(height, yDomain, data);
         
         // select update 
         let update = d3.select(g)
@@ -157,25 +160,18 @@ class Bars extends React.Component {
         
     }
     
-    // oldrender() {
-    //     const {
-    //         data,
-    //         children,
-    //         width,
-    //         height,
-    //         connectFauxDOM,
-    //         animateFauxDOM,
-    //     } = this.props;
-        
-    //     let g = ReactFauxDOM.createElement('g');
-        
-    //     var xScale = d3.scaleBand().rangeRound([0, width]).padding(0.3);
-    //     var yScale = d3.scaleLinear().clamp(true).range([height, 0]);
-        
-    //     xScale.domain(data.map(function(d) { return d.key; }));
-    //     yScale.domain([0, d3.max(data, function(d) { return d.population; })]);
-    //     // var t = d3.transition().duration(500);
-        
+    // render() {
+
+    //     d3.select(g)
+    //         .attr('class', 'bar-group')
+    //         .data(data, xDomain)
+    //         .append('rect')
+    //             .attr('class', 'bar')
+    //             .attr('x', (d) => xScale(d.country))
+    //             .attr('y', (d) => yScale(d.population))
+    //             .attr('width', xScale.bandwidth())
+    //             .attr('height', (d) => (height - yScale(d.population)))
+
     //     return (
     //         <g>
     //         {
@@ -204,16 +200,42 @@ class Bars extends React.Component {
     */
     stringToColor(str) {
         var hash = 0;
-        for (var i = 0; i < str.length; i++) {
+        for (let i = 0; i < str.length; i++) {
             hash = str.charCodeAt(i) + ((hash << 5) - hash);
         }
-        var color = '#';
-        for (i = 0; i < 3; i++) {
-            var value = (hash >> (i * 8)) & 0xFF;
-            color += ('00' + value.toString(16)).substr(-2);
-        }
-        return color;
+        return this.indexToColor(Math.abs(hash));
     }
+
+    /**
+     * Convert index to a color
+     * @param {integer} n
+     * @returns {string} color hext string 
+     */
+    indexToColor(n) {
+        var colors = [
+            "#3366cc",
+            "#dc3912",
+            "#ff9900",
+            "#109618",
+            "#990099",
+            "#0099c6",
+            "#dd4477",
+            "#66aa00",
+            "#b82e2e",
+            "#316395",
+            "#994499",
+            "#22aa99",
+            "#aaaa11",
+            "#6633cc",
+            "#e67300", 
+            "#8b0707",
+            "#651067",
+            "#329262",
+            "#5574a6",
+            "#3b3eac"
+        ];
+        return colors[n % colors.length];
+    }    
     
     
     render() {
