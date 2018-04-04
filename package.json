@@ -2,7 +2,7 @@
   "name": "react-d3-zerrtech",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://zerrtech.github.io/react-d3-zerrtech",
+  "homepage": "https://zerrtech.github.io/react-d3-zerrtech",
   "dependencies": {
     "d3": "^5.0.0",
     "d3-axis": "^1.0.8",
